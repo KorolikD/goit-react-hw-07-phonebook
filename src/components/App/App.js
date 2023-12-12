@@ -1,17 +1,22 @@
 import { GlobalStyles } from 'styles';
-
 import { Title, TitleH2 } from './App.styled';
-import { ContactForm, Filter, ContactsList } from 'components';
+import { ContactForm, Filter, ContactsList, Loader } from 'components';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
-import { selectContacts } from '../../redux/selectors';
-import { useEffect } from 'react';
+import {
+  selectContacts,
+  selectError,
+  selectIsLoading,
+} from '../../redux/selectors';
 import { fetchContacts } from '../../redux/operations';
 
 export const App = () => {
   const dispatch = useDispatch();
 
-  const { items, isLoading, error } = useSelector(selectContacts);
+  const contacts = useSelector(selectContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
 
   useEffect(() => {
     dispatch(fetchContacts());
@@ -27,9 +32,9 @@ export const App = () => {
       <TitleH2>Contacts</TitleH2>
       <Filter />
 
-      {isLoading && <p>...Завантаження</p>}
+      {(isLoading && <Loader />) || (contacts.length > 0 && <ContactsList />)}
 
-      {items.length > 0 && <ContactsList />}
+      {error && <p style={{ textAlign: 'center' }}>{error}</p>}
 
       <GlobalStyles />
     </>

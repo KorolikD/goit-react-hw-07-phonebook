@@ -9,14 +9,14 @@ import {
   SubmitButton,
 } from './ContactForm.styled';
 import * as Yup from 'yup';
-// import { addContact } from '../../redux/contactsSlice';
 import { selectContacts } from '../../redux/selectors';
 import toast from 'react-hot-toast';
+import { addContact } from '../../redux/operations';
 
 // Валідація за допомогою Yup
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
-  number: Yup.string().required('Required'),
+  phone: Yup.string().required('Required'),
 });
 
 export const ContactForm = () => {
@@ -28,10 +28,10 @@ export const ContactForm = () => {
     <Formik
       initialValues={{
         name: '',
-        number: '',
+        phone: '',
       }}
       validationSchema={SignupSchema}
-      onSubmit={({ name, number }, actions) => {
+      onSubmit={({ name, phone }, actions) => {
         const isContactInList = contacts.some(
           ({ name: contactName }) =>
             contactName.toLowerCase().trim() === name.toLowerCase().trim()
@@ -40,7 +40,7 @@ export const ContactForm = () => {
         if (isContactInList) {
           toast.error(`"${name}" is already in contacts`);
         } else {
-          // dispatch(addContact(name, number));
+          dispatch(addContact({ name, phone }));
         }
 
         actions.resetForm();
@@ -54,8 +54,8 @@ export const ContactForm = () => {
         </FormGroup>
         <FormGroup>
           Number
-          <Field type="number" name="number"></Field>
-          <ErrorMessage name="number" component={'span'} />
+          <Field type="number" name="phone"></Field>
+          <ErrorMessage name="phone" component={'span'} />
         </FormGroup>
 
         <SubmitButton type="submit">Add contact</SubmitButton>
